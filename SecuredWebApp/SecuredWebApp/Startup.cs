@@ -1,4 +1,7 @@
-﻿using Owin;
+﻿using Microsoft.IdentityModel.Tokens;
+using Microsoft.Owin.Security.ActiveDirectory;
+using Owin;
+using System.Configuration;
 
 namespace SecuredWebApp
 {
@@ -6,7 +9,15 @@ namespace SecuredWebApp
     {
         public void Configuration(IAppBuilder app)
         {
-            ConfigureAuth(app);
+            app.UseWindowsAzureActiveDirectoryBearerAuthentication(
+               new WindowsAzureActiveDirectoryBearerAuthenticationOptions
+               {
+                   Tenant = ConfigurationManager.AppSettings["ida:Tenant"],
+                   TokenValidationParameters = new TokenValidationParameters
+                   {
+                       ValidAudience = ConfigurationManager.AppSettings["ida:Audience"]
+                   },
+               });
         }
     }
 }
